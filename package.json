@@ -6,8 +6,8 @@
   "scripts": {
     "build": "webpack --mode=production",
     "start": "webpack-cli serve --mode development",
-    "lint-fix": "eslint --fix './src/**/*.{js,ts}' && prettier --write './src/**/*.{js,ts}'",
-    "prepare": "husky install"
+    "lint": "eslint --fix 'src/**/*.{js,ts}'",
+    "lint-fix": "eslint --fix './src/**/*.{js,ts}' && prettier --write './src/**/*.{js,ts}'"
   },
   "author": "",
   "license": "ISC",
@@ -31,8 +31,8 @@
     }
   },
   "lint-staged": {
-    "./src/**/*.{js,ts}": [
-      "npm run lint--fix"
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "npm run lint-fix"
     ]
   }
 }
