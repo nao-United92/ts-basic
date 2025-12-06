@@ -26,82 +26,89 @@
 
 // --- 課題1: LogLevel Enum (数値Enum) ---
 enum LogLevel {
-    ERROR,   // 0
-    WARN,    // 1
-    INFO,    // 2
-    DEBUG    // 3
+  ERROR, // 0
+  WARN, // 1
+  INFO, // 2
+  DEBUG, // 3
 }
 
 function logMessage(level: LogLevel, message: string) {
-    if (level === LogLevel.ERROR) {
-        console.error(`[ERROR]: ${message}`);
-    } else if (level === LogLevel.WARN) {
-        console.warn(`[WARN]: ${message}`);
-    } else {
-        console.log(`[${LogLevel[level]}]: ${message}`);
-    }
+  if (level === LogLevel.ERROR) {
+    console.error(`[ERROR]: ${message}`)
+  } else if (level === LogLevel.WARN) {
+    console.warn(`[WARN]: ${message}`)
+  } else {
+    console.log(`[${LogLevel[level]}]: ${message}`)
+  }
 }
 
-logMessage(LogLevel.INFO, "User logged in.");
-
+logMessage(LogLevel.INFO, 'User logged in.')
 
 // --- 課題2: Weekdays Enum (数値Enum) ---
 enum Weekdays {
-    Sunday,
-    Monday,
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday,
-    Saturday
+  Sunday,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday,
 }
 
-function isWeekend(day: number): boolean { // dayはWeekdays Enumのインデックスと一致する想定
-    return day === 0 || day === 6; // マジックナンバーで比較している
+function isWeekend(day: number): boolean {
+  // dayはWeekdays Enumのインデックスと一致する想定
+  return day === 0 || day === 6 // マジックナンバーで比較している
 }
 
-console.log(`Is Monday a weekend? ${isWeekend(Weekdays.Monday)}`);
-console.log(`Is Sunday a weekend? ${isWeekend(Weekdays.Sunday)}`);
-
+console.log(`Is Monday a weekend? ${isWeekend(Weekdays.Monday)}`)
+console.log(`Is Sunday a weekend? ${isWeekend(Weekdays.Sunday)}`)
 
 // --- 課題3: OrderStatus Enumと文字列変換 ---
 enum OrderStatus {
-    Pending,     // 0
-    Processing,  // 1
-    Shipped,     // 2
-    Delivered,   // 3
-    Cancelled    // 4
+  Pending, // 0
+  Processing, // 1
+  Shipped, // 2
+  Delivered, // 3
+  Cancelled, // 4
 }
 
 function getOrderStatusText(status: OrderStatus): string {
-    switch (status) {
-        case OrderStatus.Pending: return "注文受付中";
-        case OrderStatus.Processing: return "処理中";
-        case OrderStatus.Shipped: return "発送済み";
-        case OrderStatus.Delivered: return "配達済み";
-        case OrderStatus.Cancelled: return "キャンセル済み";
-        default: return "不明なステータス";
-    }
+  switch (status) {
+    case OrderStatus.Pending:
+      return '注文受付中'
+    case OrderStatus.Processing:
+      return '処理中'
+    case OrderStatus.Shipped:
+      return '発送済み'
+    case OrderStatus.Delivered:
+      return '配達済み'
+    case OrderStatus.Cancelled:
+      return 'キャンセル済み'
+    default:
+      return '不明なステータス'
+  }
 }
 
-console.log(`Order status 1: ${getOrderStatusText(OrderStatus.Processing)}`);
-
+console.log(`Order status 1: ${getOrderStatusText(OrderStatus.Processing)}`)
 
 // --- 課題4: PaymentMethod Enum (マジックナンバーの問題) ---
 enum PaymentMethod {
-    CreditCard,  // 0
-    PayPal,      // 1
-    BankTransfer // 2
+  CreditCard, // 0
+  PayPal, // 1
+  BankTransfer, // 2
 }
 
-function processPayment(amount: number, method: number) { // methodはPaymentMethodの数値と一致する想定
-    if (method === 0) { // マジックナンバー
-        console.log(`Processing ${amount} via Credit Card.`);
-    } else if (method === 1) { // マジックナンバー
-        console.log(`Processing ${amount} via PayPal.`);
-    } else {
-        console.log(`Processing ${amount} via Bank Transfer.`);
-    }
+function processPayment(amount: number, method: number) {
+  // methodはPaymentMethodの数値と一致する想定
+  if (method === 0) {
+    // マジックナンバー
+    console.log(`Processing ${amount} via Credit Card.`)
+  } else if (method === 1) {
+    // マジックナンバー
+    console.log(`Processing ${amount} via PayPal.`)
+  } else {
+    console.log(`Processing ${amount} via Bank Transfer.`)
+  }
 }
 
-processPayment(100, PaymentMethod.CreditCard);
+processPayment(100, PaymentMethod.CreditCard)
