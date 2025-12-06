@@ -33,90 +33,86 @@
 
 // --- 課題1: 条件型と型ガードの機会 ---
 interface SuccessResponse<T> {
-    status: 'success';
-    data: T;
+  status: 'success'
+  data: T
 }
 
 interface ErrorResponse {
-    status: 'error';
-    message: string;
+  status: 'error'
+  message: string
 }
 
-type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
+type ApiResponse<T> = SuccessResponse<T> | ErrorResponse
 
 function unwrapResponse<T>(response: ApiResponse<T>): T | string {
-    if (response.status === 'success') {
-        return response.data;
-    } else {
-        return response.message;
-    }
+  if (response.status === 'success') {
+    return response.data
+  } else {
+    return response.message
+  }
 }
 
-const successfulData: ApiResponse<string[]> = { status: 'success', data: ['item1', 'item2'] };
-const errorData: ApiResponse<number> = { status: 'error', message: 'Failed to fetch' };
+const successfulData: ApiResponse<string[]> = { status: 'success', data: ['item1', 'item2'] }
+const errorData: ApiResponse<number> = { status: 'error', message: 'Failed to fetch' }
 
-console.log(unwrapResponse(successfulData));
-console.log(unwrapResponse(errorData));
-
+console.log(unwrapResponse(successfulData))
+console.log(unwrapResponse(errorData))
 
 // --- 課題2: マッピング型 `Mutable<T>` の実装 ---
-type Readonly<T> = {
-    readonly [P in keyof T]: T[P];
-};
-
 type Mutable<T> = {
-    // TODO: Readonly<T> の逆で、全てのプロパティから `readonly` 修飾子を取り除くマッピング型を定義してみましょう
-    // [P in keyof T]: T[P]; // これはまだ不完全
-};
+  -readonly [P in keyof T]: T[P]
+}
 
 function createMutable<T extends object>(obj: Readonly<T>): Mutable<T> {
-    const newObj: any = {}; // ここで any を使っているのが問題
-    for (const key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-            newObj[key] = obj[key];
-        }
-    }
-    return newObj as Mutable<T>; // ここでも型アサーションを使っている
+  return { ...obj }
 }
 
 interface Point {
-    readonly x: number;
-    readonly y: number;
+  readonly x: number
+  readonly y: number
 }
 
-const readOnlyPoint: Readonly<Point> = { x: 10, y: 20 };
-const mutablePoint = createMutable(readOnlyPoint);
-mutablePoint.x = 15; // mutablePoint は変更可能にしたい
-
+const readOnlyPoint: Readonly<Point> = { x: 10, y: 20 }
+const mutablePoint = createMutable(readOnlyPoint)
+mutablePoint.x = 15 // mutablePoint は変更可能にしたい
 
 // --- 課題3: 複雑な型の除外 (Exclude) ---
 interface User {
-    id: number;
-    name: string;
-    email: string;
-    isAdmin: boolean;
+  id: number
+  name: string
+  email: string
+  isAdmin: boolean
 }
 
 interface AdminUser extends User {
-    isAdmin: true; // AdminUserは常にisAdminがtrue
-    roles: string[];
+  isAdmin: true // AdminUserは常にisAdminがtrue
+  roles: string[]
 }
+
+const admin: AdminUser = {
+  id: 99,
+  name: 'Admin',
+  email: 'admin@example.com',
+  isAdmin: true,
+  roles: ['superuser'],
+}
+console.log(admin)
 
 // TODO: User型からAdminUserのプロパティ（特にisAdmin: true）を除外した型を定義してみましょう
 // type ExcludeAdmin = Omit<User, 'roles'> & { isAdmin: false }; // これはまだ不完全
 // type NonAdminUser = ?;
 
-
 // --- 課題4: イベントログの型課題 ---
 class EventLogger {
-    logEvent(eventName: string, payload: object) { // payloadがanyに近い状態
-        const timestamp = new Date().toISOString();
-        console.log(`[${timestamp}] Event: ${eventName}, Payload:`, payload);
-        // TODO: ここで eventName に応じた型チェックや処理を追加してみましょう
-    }
+  logEvent(eventName: string, payload: object) {
+    // payloadがanyに近い状態
+    const timestamp = new Date().toISOString()
+    console.log(`[${timestamp}] Event: ${eventName}, Payload:`, payload)
+    // TODO: ここで eventName に応じた型チェックや処理を追加してみましょう
+  }
 }
 
-const logger = new EventLogger();
-logger.logEvent('login', { userId: 'u123', ipAddress: '192.168.1.1' });
-logger.logEvent('logout', { userId: 'u123' });
+const logger = new EventLogger()
+logger.logEvent('login', { userId: 'u123', ipAddress: '192.168.1.1' })
+logger.logEvent('logout', { userId: 'u123' })
 // logger.logEvent('unknown', { data: 'some data' }); // これは許容されるべきか？

@@ -32,65 +32,74 @@
 
 // --- ユーザーの型定義 ---
 interface User {
-  id: number;
-  name: string;
-  email: string;
-  password?: string; // パスワードはオプショナル
-  createdAt: Date;
+  id: number
+  name: string
+  email: string
+  password?: string // パスワードはオプショナル
+  createdAt: Date
 }
 
 // --- 課題1: オブジェクトから一部のプロパティを抽出する (`Pick`) ---
-function createUserSummary(user: User): { id: number, name: string } { // 戻り値の型が手動
+type UserSummary = Pick<User, 'id' | 'name'>
+
+function createUserSummary(user: User): UserSummary {
   return {
     id: user.id,
     name: user.name,
-  };
+  }
 }
-const user: User = { id: 1, name: 'Alice', email: 'alice@example.com', createdAt: new Date() };
-const userSummary = createUserSummary(user);
-console.log(userSummary);
-
+const user: User = { id: 1, name: 'Alice', email: 'alice@example.com', createdAt: new Date() }
+const userSummary = createUserSummary(user)
+console.log(userSummary)
 
 // --- 課題2: オブジェクトから特定のプロパティを除外する (`Omit`) ---
-function getSensitiveUserInfo(user: User): object { // 戻り値の型が曖昧
-  delete user.password; // 元のオブジェクトを変更してしまっている！
-  return user;
-}
-const userWithPass: User = { id: 2, name: 'Bob', email: 'bob@example.com', password: '123', createdAt: new Date() };
-// const sensitiveInfo = getSensitiveUserInfo(userWithPass);
-// console.log(sensitiveInfo);
-// console.log(userWithPass.password); // undefined になってしまっている
+type UserWithoutPassword = Omit<User, 'password'>
 
+function getSensitiveUserInfo(user: User): UserWithoutPassword {
+  const newUser: UserWithoutPassword = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    createdAt: user.createdAt,
+  }
+  return newUser
+}
+const userWithPass: User = { id: 2, name: 'Bob', email: 'bob@example.com', password: '123', createdAt: new Date() }
+const sensitiveInfo = getSensitiveUserInfo(userWithPass)
+console.log(sensitiveInfo)
+console.log(userWithPass.password) // undefined になってしまっている
 
 // --- 課題3: オブジェクトの一部を更新する (`Partial`) ---
-function updateUser(user: User, updates: User): User { // updatesは常にUserの全プロパティを要求する
-  return { ...user, ...updates };
+function updateUser(user: User, updates: Partial<User>): User {
+  return { ...user, ...updates }
 }
 // nameだけ更新したいのに、emailやcreatedAtも渡す必要がある
 const updatedUser = updateUser(user, {
-  id: 1,
-  name: "Alice Smith",
-  email: 'alice@example.com', // このような不要なプロパティも渡す必要がある
-  createdAt: user.createdAt
-});
-console.log(updatedUser);
-
+  name: 'Alice Smith', // nameだけ更新したい
+})
+console.log(updatedUser)
 
 // --- 課題4: オプショナルなプロパティを必須にする (`Required`) ---
 interface AppConfig {
-  port?: number;
-  env?: 'development' | 'production' | 'test';
-  logLevel?: 'info' | 'warn' | 'error';
+  port?: number
+  env?: 'development' | 'production' | 'test'
+  logLevel?: 'info' | 'warn' | 'error'
 }
 
-function processConfig(config: AppConfig) {
-  // config.port や config.env が undefined の可能性があるのに、チェックなしで使っている
-  const port = config.port || 3000;
-  const env = config.env?.toUpperCase();
-  console.log(`Running on port ${port} in ${env} mode.`);
+function processConfig(config: Required<AppConfig>) {
+  console.log(`Running on port ${config.port} in ${config.env?.toUpperCase()} mode.`)
+}
+
+const defaultConfig: Required<AppConfig> = {
+  port: 3000,
+  env: 'development',
+  logLevel: 'info',
 }
 
 const userConfig: AppConfig = {
   env: 'production',
-};
-processConfig(userConfig);
+}
+
+// Merge userConfig with defaultConfig to ensure all properties are present
+const finalConfig: Required<AppConfig> = { ...defaultConfig, ...userConfig }
+processConfig(finalConfig)

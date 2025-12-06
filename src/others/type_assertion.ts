@@ -18,47 +18,45 @@
 
 function findElement(selector: string) {
   // `document.getElementById` は `HTMLElement | null` を返す
-  // ここでは `as HTMLElement` を使って強制的に型を上書きしている
-  const el = document.getElementById(selector) as HTMLElement;
-  el.style.display = 'block'; // もし el が null ならここで "Cannot set properties of null" エラーが発生する
+  const el = document.getElementById(selector)
+  if (el) {
+    el.style.display = 'block'
+  }
 }
 
 // 実行例（HTML環境で実行する場合）
-// findElement('my-element');
-
+findElement('my-element')
 
 // --- 課題2: オブジェクトの型アサーション ---
 
 interface Car {
-  type: 'car';
-  fuel: number; // ガソリン残量
+  type: 'car'
+  fuel: number // ガソリン残量
 }
 
 interface Truck {
-  type: 'truck';
-  capacity: number; // 積載量
+  type: 'truck'
+  capacity: number // 積載量
 }
 
-type Vehicle = Car | Truck;
+type Vehicle = Car | Truck
 
 function getVehicleInfo(vehicle: Vehicle) {
   switch (vehicle.type) {
     case 'car':
-      // `vehicle.fuel` にアクセスするために型アサーションを使っている
-      console.log(`Gas left: ${(vehicle as Car).fuel}L`);
-      break;
+      console.log(`Gas left: ${vehicle.fuel}L`)
+      break
     case 'truck':
-      // こちらも同様
-      console.log(`Max load: ${(vehicle as Truck).capacity}kg`);
-      break;
+      console.log(`Max load: ${vehicle.capacity}kg`)
+      break
   }
 }
 
-const myCar: Vehicle = { type: 'car', fuel: 30 };
-const myTruck: Vehicle = { type: 'truck', capacity: 1500 };
+const myCar: Vehicle = { type: 'car', fuel: 30 }
+const myTruck: Vehicle = { type: 'truck', capacity: 1500 }
 
-getVehicleInfo(myCar);
-getVehicleInfo(myTruck);
+getVehicleInfo(myCar)
+getVehicleInfo(myTruck)
 
 // --- 発展課題 ---
 // `getVehicleInfo` の `switch` 文は、新しい `Vehicle` の型 (例: `Bike`) が追加されたときに

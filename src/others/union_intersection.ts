@@ -25,70 +25,75 @@
 
 // --- 課題1: Union型の基礎 ---
 function printId(id: string | number) {
-    if (typeof id === "string") {
-        console.log(`Your ID is: ${id.toUpperCase()}`);
-    } else {
-        console.log(`Your ID is: ${id}`);
-    }
+  if (typeof id === 'string') {
+    console.log(`Your ID is: ${id.toUpperCase()}`)
+  } else {
+    console.log(`Your ID is: ${id}`)
+  }
 }
 
-printId("abc123");
-printId(12345);
-
+printId('abc123')
+printId(12345)
 
 // --- 課題2: Intersection型の基礎と `any` の問題 ---
-function combine(objA: object, objB: object): any { // 戻り値がanyになっている
-    return { ...objA, ...objB };
+function combine<T extends object, U extends object>(objA: T, objB: U): T & U {
+  return { ...objA, ...objB }
 }
 
-const obj1 = { name: "Alice", age: 30 };
-const obj2 = { occupation: "Engineer", company: "XYZ Corp" };
+const obj1 = { name: 'Alice', age: 30 }
+const obj2 = { occupation: 'Engineer', company: 'XYZ Corp' }
 
-const combinedObj = combine(obj1, obj2);
-console.log(combinedObj.name);
-console.log(combinedObj.occupation);
-
+const combinedObj = combine(obj1, obj2)
+console.log(combinedObj.name)
+console.log(combinedObj.occupation)
 
 // --- 課題3: UnionとIntersectionの組み合わせ ---
 interface Person {
-    name: string;
-    age: number;
+  name: string
+  age: number
 }
 
 interface Worker {
-    employeeId: string;
-    department: string;
+  employeeId: string
+  department: string
 }
 
-// 雇用されている人を表す型を定義してみよう (例: EmployedPerson)
-// type EmployedPerson = ?;
+type EmployedPerson = Person & Worker
+
+const employedPerson: EmployedPerson = {
+  name: 'John Doe',
+  age: 30,
+  employeeId: 'EMP001',
+  department: 'Sales',
+}
+console.log(employedPerson)
 
 // --- 課題4: Union型と型ガードの機会 ---
 interface User {
-    name: string;
-    email: string;
+  name: string
+  email: string
 }
 
 interface Admin {
-    name: string;
-    email: string;
-    isAdmin: boolean;
-    roles: string[];
+  name: string
+  email: string
+  isAdmin: boolean
+  roles: string[]
 }
 
 function printDetailedInfo(person: User | Admin) {
-    console.log(`Name: ${person.name}`);
-    console.log(`Email: ${person.email}`);
+  console.log(`Name: ${person.name}`)
+  console.log(`Email: ${person.email}`)
 
-    // ここでisAdminプロパティの存在を直接チェックしている
-    // より安全でTypeScriptらしい型ガードを導入してみよう
-    if ('isAdmin' in person && person.isAdmin) {
-        console.log(`Roles: ${person.roles.join(', ')}`);
-    }
+  // ここでisAdminプロパティの存在を直接チェックしている
+  // より安全でTypeScriptらしい型ガードを導入してみよう
+  if ('isAdmin' in person && person.isAdmin) {
+    console.log(`Roles: ${person.roles.join(', ')}`)
+  }
 }
 
-const normalUser: User = { name: "Bob", email: "bob@example.com" };
-const adminUser: Admin = { name: "Charlie", email: "charlie@example.com", isAdmin: true, roles: ["editor", "viewer"] };
+const normalUser: User = { name: 'Bob', email: 'bob@example.com' }
+const adminUser: Admin = { name: 'Charlie', email: 'charlie@example.com', isAdmin: true, roles: ['editor', 'viewer'] }
 
-printDetailedInfo(normalUser);
-printDetailedInfo(adminUser);
+printDetailedInfo(normalUser)
+printDetailedInfo(adminUser)

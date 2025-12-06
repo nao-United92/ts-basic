@@ -26,79 +26,82 @@
 //    戻り値が `ErrorResponse[]` となるようにしてください。
 
 // --- 課題1: `null` や `undefined` を配列から取り除く ---
-
-function getValidNumbers(items: (number | null | undefined)[]): number[] {
-  // `filter` を使っても、戻り値の型は `(number | null | undefined)[]` のまま推論される
-  const filtered = items.filter(item => item !== null && item !== undefined);
-
-  // そのため、後続の処理で `n` が `number` である保証がなく、コンパイルエラーになる
-  // const total = filtered.reduce((sum, n) => sum + n, 0); // Error: Object is possibly 'null' or 'undefined'.
-
-  // ここで無理やり型アサーションで解決しているが、もっと良い方法がある
-  return filtered as number[];
+function isNumber(item: number | null | undefined): item is number {
+  return item !== null && item !== undefined
 }
 
-const mixedNumbers = [1, 2, null, 4, undefined, 6];
-const validNumbers = getValidNumbers(mixedNumbers);
-console.log("Valid Numbers:", validNumbers);
+function getValidNumbers(items: (number | null | undefined)[]): number[] {
+  return items.filter(isNumber)
+}
 
+const mixedNumbers = [1, 2, null, 4, undefined, 6]
+const validNumbers = getValidNumbers(mixedNumbers)
+console.log('Valid Numbers:', validNumbers)
 
 // --- 課題2: Union型の配列から特定の型を抽出する ---
 
 interface Dog {
-  type: 'dog';
-  name: string;
-  bark(): void;
+  type: 'dog'
+  name: string
+  bark(): void
 }
 
 interface Cat {
-  type: 'cat';
-  name: string;
-  meow(): void;
+  type: 'cat'
+  name: string
+  meow(): void
 }
 
-type Animal = Dog | Cat;
+type Animal = Dog | Cat
 
-function getDogs(animals: Animal[]): Animal[] { // 戻り値の型が Animal[] のまま
-  return animals.filter(animal => animal.type === 'dog');
+function isDog(animal: Animal): animal is Dog {
+  return animal.type === 'dog'
+}
+
+function getDogs(animals: Animal[]): Dog[] {
+  return animals.filter(isDog)
 }
 
 const mixedAnimals: Animal[] = [
   { type: 'dog', name: 'Fido', bark: () => console.log('Woof!') },
   { type: 'cat', name: 'Whiskers', meow: () => console.log('Meow') },
   { type: 'dog', name: 'Buddy', bark: () => console.log('Woof! Woof!') },
-];
+]
 
-const dogs = getDogs(mixedAnimals);
-// `dogs` の要素は `Dog` 型だと分かっているのに、型推論ができていない
-// dogs.forEach(dog => dog.bark()); // Error: Property 'bark' does not exist on type 'Animal'.
-
+const dogs = getDogs(mixedAnimals)
+dogs.forEach((dog) => dog.bark())
 
 // --- 課題3: エラー応答だけをフィルタリングする ---
 
 interface SuccessResponse<T> {
-    status: 'success';
-    data: T;
+  status: 'success'
+  data: T
 }
 
 interface ErrorResponse {
-    status: 'error';
-    message: string;
+  status: 'error'
+  message: string
 }
 
-type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
+type ApiResponse<T> = SuccessResponse<T> | ErrorResponse
+
+function isErrorResponse<T>(response: ApiResponse<T>): response is ErrorResponse {
+  return response.status === 'error'
+}
 
 function filterErrors<T>(responses: ApiResponse<T>[]): ErrorResponse[] {
-  // TODO: 型述語を使って、`ErrorResponse` だけを抽出する実装をしてください
-  return []; // 仮の実装
+  return responses.filter(isErrorResponse)
 }
 
 const apiResponses: ApiResponse<number>[] = [
-    { status: 'success', data: 123 },
-    { status: 'error', message: 'Not Found' },
-    { status: 'error', message: 'Internal Server Error' },
-    { status: 'success', data: 456 },
-];
+  { status: 'success', data: 123 },
+  { status: 'error', message: 'Not Found' },
+  { status: 'error', message: 'Internal Server Error' },
+  { status: 'success', data: 456 },
+]
 
-const errors = filterErrors(apiResponses);
-console.log("Error Messages:", errors.map(e => e.message));
+const errors = filterErrors(apiResponses)
+console.log(
+  'Error Messages:',
+  errors.map((e) => e.message),
+)

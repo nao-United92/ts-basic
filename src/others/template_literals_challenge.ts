@@ -26,49 +26,47 @@
 
 // --- 課題1: イベント名の生成 ---
 
-type Component = "Header" | "Footer" | "Button" | "Modal";
-type Action = "Click" | "Hover" | "Submit" | "Close";
+type Component = 'Header' | 'Footer' | 'Button' | 'Modal'
+type Action = 'Click' | 'Hover' | 'Submit' | 'Close'
 
 // TODO: `Component` と `Action` を使って "Component_Action" 形式の型を生成する
-type EventName = string; // 現在はただのstring
+type EventName = `${Component}_${Action}`
 
 function logEvent(eventName: EventName) {
-  console.log(`Event logged: ${eventName}`);
+  console.log(`Event logged: ${eventName}`)
 }
 
-logEvent("Header_Click");
-logEvent("Button_Submit");
+logEvent('Header_Click')
+logEvent('Button_Submit')
 // logEvent("Unknown_Event"); // これはコンパイルエラーになるべき
-
 
 // --- 課題2: CSSカスタムプロパティのキー ---
 
 // TODO: `key` が `"--"` で始まる文字列であることを型で強制する
-function setCssVariable(key: string, value: string) {
+function setCssVariable(key: `--${string}`, value: string) {
   // document.documentElement.style.setProperty(key, value);
-  console.log(`CSS var set: ${key} = ${value}`);
+  console.log(`CSS var set: ${key} = ${value}`)
 }
 
-setCssVariable("--primary-color", "blue");
-setCssVariable("--font-size", "16px");
+setCssVariable('--primary-color', 'blue')
+setCssVariable('--font-size', '16px')
 // setCssVariable("margin-top", "10px"); // これはコンパイルエラーになるべき
-
 
 // --- 課題3: APIエンドポイントの型安全な定義 ---
 
-type Version = "v1" | "v2";
-type Resource = "users" | "posts" | "products";
+type Version = 'v1' | 'v2'
+type Resource = 'users' | 'posts' | 'products'
 
 // TODO: `/api/{Version}/{Resource}` 形式のAPIエンドポイントの型を定義する
-type ApiEndpoint = string;
+type ApiEndpoint = `/api/${Version}/${Resource}`
 
 function fetchData(endpoint: ApiEndpoint) {
-  console.log(`Fetching data from: ${endpoint}`);
+  console.log(`Fetching data from: ${endpoint}`)
   // fetch(`https://api.example.com${endpoint}`);
 }
 
-fetchData("/api/v1/users");
-fetchData("/api/v2/products");
+fetchData('/api/v1/users')
+fetchData('/api/v2/products')
 // fetchData("/api/v3/users"); // v3 は存在しないためエラーになるべき
 // fetchData("/api/v1/comments"); // comments は存在しないためエラーになるべき
 // fetchData("users/v1/api"); // フォーマットが違うためエラーになるべき
