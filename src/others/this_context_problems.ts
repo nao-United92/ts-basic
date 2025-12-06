@@ -30,7 +30,7 @@
 
 // --- 課題1: クラスメソッドとコールバックにおける `this` ---
 class Counter {
-  count: number = 0;
+  count: number = 0
 
   constructor() {
     // 解決策 c) constructorで .bind(this) を使う
@@ -40,62 +40,60 @@ class Counter {
   // 解決策 b) メソッドをアロー関数で定義する
   // increment = () => { ... }
   increment() {
-    this.count++;
-    console.log(this.count);
+    this.count++
+    console.log(this.count)
   }
 
   start() {
-    console.log("Counter started...");
+    console.log('Counter started...')
     // このままでは `this.increment` 内の `this` がグローバルオブジェクトまたは undefined を指す
-    setInterval(this.increment, 1000);
+    // setInterval(this.increment, 1000);
 
     // 解決策 a) コールバックとしてアロー関数を渡す
-    // setInterval(() => this.increment(), 1000);
+    setInterval(() => this.increment(), 1000)
   }
 }
 
-// const counter = new Counter();
-// counter.start();
-
+const counter = new Counter()
+counter.start()
 
 // --- 課題2: DOMイベントリスナーにおける `this` ---
 class DOMHandler {
-  message: string = "Button clicked!";
+  message: string = 'Button clicked!'
 
   listen() {
     // このままだと、クリック時に this.message が undefined になる
-    document.body.addEventListener('click', this.onClick);
+    document.body.addEventListener('click', this.onClick.bind(this))
   }
 
   onClick() {
     // ここでの `this` は `DOMHandler` インスタンスではなく `document.body` を指す
-    // alert(this.message);
+    alert(this.message)
   }
 }
 
-// const handler = new DOMHandler();
-// handler.listen();
+const handler = new DOMHandler()
+handler.listen()
 // alert("Click anywhere on the page.");
-
 
 // --- 課題3: `this` パラメータの型注釈 ---
 interface Callable {
-  name: string;
-  call(cb: () => void): void;
+  name: string
+  call(cb: () => void): void
 }
 
-function addCallback(obj: Callable, cb: () => void) {
-  obj.call(cb);
+function addCallback(obj: Callable, cb: (this: Callable) => void) {
+  obj.call(cb)
 }
 
 const myObject = {
-  name: "MyObject",
+  name: 'MyObject',
   call(cb: () => void) {
-    cb.call(this); // `this` を指定してコールバックを呼び出す
-  }
-};
+    cb.call(this) // `this` を指定してコールバックを呼び出す
+  },
+}
 
 // cb内の `this` が any 型のため、型安全ではない
-addCallback(myObject, function() {
-  // console.log(`Callback called from: ${this.name}`);
-});
+addCallback(myObject, function () {
+  console.log(`Callback called from: ${this.name}`)
+})

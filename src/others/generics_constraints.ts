@@ -24,59 +24,52 @@
 
 // --- 課題1: オブジェクトのプロパティに安全にアクセスする ---
 
-function getProperty<T, K extends string>(obj: T, key: K): any { // KがTのキーである保証がない
-  return obj[key as keyof T]; // 無理やり型アサーションで解決している
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key]
 }
 
 const user = {
-  name: "Alice",
+  name: 'Alice',
   age: 30,
-};
+}
 
-const userName = getProperty(user, "name");
-console.log(`Name: ${userName}`);
+const userName = getProperty(user, 'name')
+console.log(`Name: ${userName}`)
 
 // この呼び出しはコンパイルエラーになるべきだが、現状では通ってしまう
 // const userEmail = getProperty(user, "email");
 // console.log(`Email: ${userEmail}`);
 
-
 // --- 課題2: 2つのオブジェクトをマージする ---
 
-function mergeObjects<T, U>(obj1: T, obj2: U): any { // 戻り値が any
-  return { ...obj1, ...obj2 };
+function mergeObjects<T extends object, U extends object>(obj1: T, obj2: U): T & U {
+  return { ...obj1, ...obj2 }
 }
 
-const objA = { a: 1, b: "hello" };
-const objB = { c: true, d: [1, 2, 3] };
+const objA = { a: 1, b: 'hello' }
+const objB = { c: true, d: [1, 2, 3] }
 
-const merged = mergeObjects(objA, objB);
+const merged = mergeObjects(objA, objB)
 // merged.a や merged.c にアクセスしたいが、型安全ではない
-console.log(merged);
-
+console.log(merged)
 
 // --- 課題3: `length` プロパティを持つ要素を扱う ---
 
-function findLongest<T>(items: T[]): T | null {
+function findLongest<T extends { length: number }>(items: T[]): T | null {
   if (items.length === 0) {
-    return null;
+    return null
   }
 
-  let longest = items[0];
+  let longest = items[0]
   for (let i = 1; i < items.length; i++) {
-    // T に .length がある保証がないため、コンパイルエラーになるはず
-    // if (items[i].length > longest.length) {
-    //   longest = items[i];
-    // }
+    if (items[i].length > longest.length) {
+      longest = items[i]
+    }
   }
-  return longest;
+  return longest
 }
 
 // 文字列の配列で試す
-const strings = ["short", "longer", "longest string"];
-// const longestString = findLongest(strings);
-// console.log(longestString);
-
-// オブジェクトの配列で試す（.lengthがないため、本来はエラーになるべき）
-const objects = [{ name: "A" }, { name: "B" }];
-// findLongest(objects);
+const strings = ['short', 'longer', 'longest string']
+const longestString = findLongest(strings)
+console.log(longestString)

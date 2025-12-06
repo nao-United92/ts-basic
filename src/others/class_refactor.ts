@@ -17,46 +17,53 @@
 //    `userId` は一度設定されたら変更されるべきではありません。
 //    `readonly` 修飾子を付けて、不変なプロパティにしてみましょう。
 
-class UserProfile {
-  public userId: string;
-  public username: string;
-  public lastLogin: Date;
+export class UserProfile {
+  // `lastLogin` は `private` プロパティとしてカプセル化し、外部からの直接的な書き換えを防ぐ
+  private _lastLogin: Date
 
-  constructor(userId: string, username: string) {
-    this.userId = userId;
-    this.username = username;
-    this.lastLogin = new Date();
+  // コンストラクタの引数にアクセス修飾子と `readonly` を使用し、コードを簡潔にする
+  constructor(
+    public readonly userId: string, // `readonly` で不変性を保証
+    public username: string,
+  ) {
+    // `lastLogin` はインスタンス生成時に初期化
+    this._lastLogin = new Date()
+  }
+
+  // `_lastLogin` の値を安全に読み取るための getter
+  get lastLogin(): Date {
+    return this._lastLogin
   }
 
   // ユーザー情報を表示する
   displayProfile() {
-    console.log(`ID: ${this.userId}, Name: ${this.username}, Last Login: ${this.lastLogin.toLocaleString()}`);
+    // getter を経由して `lastLogin` にアクセス
+    console.log(`ID: ${this.userId}, Name: ${this.username}, Last Login: ${this.lastLogin.toLocaleString()}`)
   }
 
-  // ログイン日時を更新する
+  // ログイン日時を更新するための専用メソッド
   updateLogin() {
-    this.lastLogin = new Date();
-    console.log("Login time updated.");
+    this._lastLogin = new Date()
+    console.log('Login time updated.')
   }
 }
 
 // --- 利用例 ---
-const user = new UserProfile('user-123', 'Alice');
-user.displayProfile();
+const user = new UserProfile('user-123', 'Alice')
+user.displayProfile()
 
 // 1秒待ってからログイン日時を更新
 setTimeout(() => {
-  user.updateLogin();
-  user.displayProfile();
-}, 1000);
-
+  user.updateLogin()
+  user.displayProfile()
+}, 1000)
 
 // --- 問題点のあるコード例 ---
 // 本来であれば、lastLoginはupdateLoginメソッド経由で更新されるべき
 // しかし、publicになっているため外部から直接書き換えられてしまう
-user.lastLogin = new Date(0); // 1970年の日時に書き換えてしまう
-console.log("...Oops, lastLogin was modified directly!");
-user.displayProfile();
+// user.lastLogin = new Date(0); // getterのみでsetterがないため、この行はコンパイルエラーになる
+console.log("...Oops, lastLogin can't be modified directly anymore!")
+user.displayProfile()
 
 // userIdも書き換え可能になっている
-// user.userId = 'new-id'; // readonlyにすれば、これはコンパイルエラーになる
+// user.userId = 'new-id'; // readonlyなので、これはコンパイルエラーになる
